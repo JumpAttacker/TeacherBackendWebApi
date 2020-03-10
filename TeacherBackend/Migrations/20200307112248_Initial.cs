@@ -8,46 +8,40 @@ namespace TeacherBackend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "LessonSubject",
-                columns: table => new
+                "LessonSubject",
+                table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Price = table.Column<int>(nullable: false)
+                    Price = table.Column<int>()
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LessonSubject", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_LessonSubject", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
+                "Users",
+                table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(nullable: true),
                     Password = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
-                    Age = table.Column<int>(nullable: false),
-                    UserType = table.Column<int>(nullable: false)
+                    Age = table.Column<int>(),
+                    UserType = table.Column<int>()
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Users", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Lessons",
-                columns: table => new
+                "Lessons",
+                table => new
                 {
-                    Id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>()
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    StartTime = table.Column<DateTime>(nullable: false),
-                    Minutes = table.Column<int>(nullable: false),
-                    Price = table.Column<int>(nullable: false),
+                    StartTime = table.Column<DateTime>(),
+                    Minutes = table.Column<int>(),
+                    Price = table.Column<int>(),
                     LessonSubjectId = table.Column<int>(nullable: true),
                     TeacherId = table.Column<int>(nullable: true),
                     StudentId = table.Column<int>(nullable: true)
@@ -56,51 +50,51 @@ namespace TeacherBackend.Migrations
                 {
                     table.PrimaryKey("PK_Lessons", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Lessons_LessonSubject_LessonSubjectId",
-                        column: x => x.LessonSubjectId,
-                        principalTable: "LessonSubject",
-                        principalColumn: "Id",
+                        "FK_Lessons_LessonSubject_LessonSubjectId",
+                        x => x.LessonSubjectId,
+                        "LessonSubject",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Lessons_Users_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_Lessons_Users_StudentId",
+                        x => x.StudentId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Lessons_Users_TeacherId",
-                        column: x => x.TeacherId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
+                        "FK_Lessons_Users_TeacherId",
+                        x => x.TeacherId,
+                        "Users",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lessons_LessonSubjectId",
-                table: "Lessons",
-                column: "LessonSubjectId");
+                "IX_Lessons_LessonSubjectId",
+                "Lessons",
+                "LessonSubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lessons_StudentId",
-                table: "Lessons",
-                column: "StudentId");
+                "IX_Lessons_StudentId",
+                "Lessons",
+                "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Lessons_TeacherId",
-                table: "Lessons",
-                column: "TeacherId");
+                "IX_Lessons_TeacherId",
+                "Lessons",
+                "TeacherId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Lessons");
+                "Lessons");
 
             migrationBuilder.DropTable(
-                name: "LessonSubject");
+                "LessonSubject");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                "Users");
         }
     }
 }

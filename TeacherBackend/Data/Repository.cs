@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TeacherBackend.Model;
 
 namespace TeacherBackend.Data
 {
-    
     public class Repository<TEntity> : IRepository<TEntity>
         where TEntity : class, IEntity
     {
-        private readonly  ApplicationContext _context;
+        private readonly ApplicationContext _context;
 
-        public Repository(ApplicationContext context) => _context = context;
+        public Repository(ApplicationContext context)
+        {
+            _context = context;
+        }
 
         public void Create(TEntity entity)
         {
@@ -27,11 +26,8 @@ namespace TeacherBackend.Data
 
         public async Task Delete(int id)
         {
-            var entityToDelete =await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
-            if (entityToDelete != null)
-            {
-                _context.Set<TEntity>().Remove(entityToDelete);
-            }
+            var entityToDelete = await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == id);
+            if (entityToDelete != null) _context.Set<TEntity>().Remove(entityToDelete);
         }
 
         public async Task Edit(TEntity entity)
@@ -50,6 +46,9 @@ namespace TeacherBackend.Data
             return _context.Set<TEntity>();
         }
 
-        public async Task SaveChanges() => await _context.SaveChangesAsync();
+        public async Task SaveChanges()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

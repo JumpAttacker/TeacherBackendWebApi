@@ -32,7 +32,7 @@ namespace TeacherBackend.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var token = new JwtSecurityToken(issuer: issuer, audience: issuer, claims,
+            var token = new JwtSecurityToken(issuer, issuer, claims,
                 expires: DateTime.Now.AddDays(2),
                 signingCredentials: credentials);
 

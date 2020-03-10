@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using TeacherBackend.Data;
 using TeacherBackend.Model;
 using TeacherBackend.Services;
-using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace TeacherBackend.Controllers
 {
@@ -23,18 +19,19 @@ namespace TeacherBackend.Controllers
         public const string Admin = "Admin";
         public const string User = "User";
     }
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : Controller
     {
-        private readonly ILogger<LoginController> _logger;
         private readonly IConfiguration _config;
+        private readonly ILogger<LoginController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
 
         // GET
-        public LoginController(ILogger<LoginController> logger,IConfiguration config, IUnitOfWork unitOfWork, IUserService userService)
+        public LoginController(ILogger<LoginController> logger, IConfiguration config, IUnitOfWork unitOfWork,
+            IUserService userService)
         {
             _logger = logger;
             _config = config;
@@ -51,7 +48,7 @@ namespace TeacherBackend.Controllers
             var user = AuthenticatedUser(authenticateModel);
 
             if (user == null) return result;
-            
+
             var jwtToken = _userService.GenerateJwtToken(user);
             result = Ok(new {token = jwtToken});
 
@@ -61,19 +58,16 @@ namespace TeacherBackend.Controllers
         [HttpGet("fake")]
         public async Task<List<UserModel>> FakeUser()
         {
-            var user1 = new UserModel() {UserName = "Tom", Age = 33};
-            var user2 = new UserModel() {UserName = "Jerry", Age = 31};
+            var user1 = new UserModel {UserName = "Tom", Age = 33};
+            var user2 = new UserModel {UserName = "Jerry", Age = 31};
 
             _unitOfWork.UserModelRepository.Create(user1);
             _unitOfWork.UserModelRepository.Create(user2);
-            
+
             _unitOfWork.Save();
 
             var users = await _unitOfWork.UserModelRepository.GetAll().ToListAsync();
-            foreach (var u in users)
-            {
-                Console.WriteLine($"{u.Id}.{u.UserName} - {u.Age}");
-            }
+            foreach (var u in users) Console.WriteLine($"{u.Id}.{u.UserName} - {u.Age}");
 
             return users;
         }
@@ -106,10 +100,8 @@ namespace TeacherBackend.Controllers
         {
             UserModel user = null;
             if (login.Username == "admin" && login.Password == "admin")
-            {
                 user = new UserModel {UserName = "Admin", Email = "admin@gmail.com", Password = "admin"};
-            }
-//TODO: get user from db
+            //TODO: get user from db
             return user;
         }
 
@@ -128,7 +120,8 @@ namespace TeacherBackend.Controllers
 
             var user = User;
             var userName = claims[0].Value;
-            return "Welcome to: " + userName+" "+User.Identity.Name;;
+            return "Welcome to: " + userName + " " + User.Identity.Name;
+            ;
         }
 
         [Authorize]

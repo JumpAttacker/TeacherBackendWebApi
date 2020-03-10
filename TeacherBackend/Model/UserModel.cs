@@ -11,13 +11,11 @@ namespace TeacherBackend.Model
         public UserType UserType { get; set; }
         public string Role { get; set; }
     }
-    
+
     public class AuthenticateModel
     {
-        [Required]
-        public string Username { get; set; }
+        [Required] public string Username { get; set; }
 
-        [Required]
-        public string Password { get; set; }
+        [Required] public string Password { get; set; }
     }
 }
