@@ -16,7 +16,7 @@ namespace TeacherBackend.Data
  
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-QAPRRT8\\SQLEXPRESS;Database=TeacherCRM;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer("Server=DSRKZN237;Database=TeacherCRM;Trusted_Connection=True;");
         }
     }
 }
