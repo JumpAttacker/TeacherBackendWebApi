@@ -14,12 +14,6 @@ using TeacherBackend.Services;
 
 namespace TeacherBackend.Controllers
 {
-    public static class Role
-    {
-        public const string Admin = "Admin";
-        public const string User = "User";
-    }
-
     [Route("api/[controller]")]
     [ApiController]
     public class LoginController : Controller
@@ -28,6 +22,12 @@ namespace TeacherBackend.Controllers
         private readonly ILogger<LoginController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
+
+        private readonly List<UserModel> _users = new List<UserModel>
+        {
+            new UserModel {Login = "admin", Password = "admin", Role = "admin"},
+            new UserModel {Login = "test", Password = "test", Role = "user"}
+        };
 
         // GET
         public LoginController(ILogger<LoginController> logger, IConfiguration config, IUnitOfWork unitOfWork,
@@ -40,26 +40,30 @@ namespace TeacherBackend.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login(string login, string password)
+        public IActionResult Login(string loginOrMail, string password)
         {
-            var authenticateModel = new AuthenticateModel {Username = login, Password = password};
-            IActionResult result = Unauthorized();
+            var authenticateModel = new AuthenticateModel {LoginOrMail = loginOrMail, Password = password};
 
             var user = AuthenticatedUser(authenticateModel);
 
-            if (user == null) return result;
+            if (user == null) return Ok(new {Error = "Incorrect login or password"});
 
             var jwtToken = _userService.GenerateJwtToken(user);
-            result = Ok(new {token = jwtToken});
 
-            return result;
+            return Ok(
+                new
+                {
+                    user.Login,
+                    Token = jwtToken
+                }
+            );
         }
 
         [HttpGet("fake")]
         public async Task<List<UserModel>> FakeUser()
         {
-            var user1 = new UserModel {UserName = "Tom", Age = 33};
-            var user2 = new UserModel {UserName = "Jerry", Age = 31};
+            var user1 = new UserModel {Login = "Tom", Age = 33};
+            var user2 = new UserModel {Login = "Jerry", Age = 31};
 
             _unitOfWork.UserModelRepository.Create(user1);
             _unitOfWork.UserModelRepository.Create(user2);
@@ -67,7 +71,7 @@ namespace TeacherBackend.Controllers
             _unitOfWork.Save();
 
             var users = await _unitOfWork.UserModelRepository.GetAll().ToListAsync();
-            foreach (var u in users) Console.WriteLine($"{u.Id}.{u.UserName} - {u.Age}");
+            foreach (var u in users) Console.WriteLine($"{u.Id}.{u.Login} - {u.Age}");
 
             return users;
         }
@@ -96,27 +100,22 @@ namespace TeacherBackend.Controllers
         }
 */
 
-        private UserModel AuthenticatedUser(AuthenticateModel login)
+        private UserModel AuthenticatedUser(AuthenticateModel authData)
         {
-            UserModel user = null;
-            if (login.Username == "admin" && login.Password == "admin")
-                user = new UserModel {UserName = "Admin", Email = "admin@gmail.com", Password = "admin"};
+            var user = _users.FirstOrDefault(x =>
+                (x.Login == authData.LoginOrMail || x.Email == authData.LoginOrMail) &&
+                x.Password == authData.Password);
             //TODO: get user from db
             return user;
         }
 
-        [Authorize]
+        [Authorize(Roles = "admin")]
         [HttpPost("Post")]
         public string Post()
         {
             if (!(HttpContext.User.Identity is ClaimsIdentity identity))
                 return "Error";
             var claims = identity.Claims.ToList();
-            foreach (var claim in claims)
-            {
-                Console.WriteLine(claim.Value);
-                _logger.LogDebug(claim.Value);
-            }
 
             var user = User;
             var userName = claims[0].Value;

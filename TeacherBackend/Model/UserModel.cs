@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TeacherBackend.Model
+﻿namespace TeacherBackend.Model
 {
     public class UserModel : Entity
     {
-        public string UserName { get; set; }
+        public string Login { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public int Age { get; set; }
@@ -12,10 +10,14 @@ namespace TeacherBackend.Model
         public string Role { get; set; }
     }
 
-    public class AuthenticateModel
+    public class RegistrationUserModel
     {
-        [Required] public string Username { get; set; }
-
-        [Required] public string Password { get; set; }
+        public string Login { get; set; }
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public int Age { get; set; }
+        public UserType UserType { get; set; }
+        public int ClassNumber { get; set; }
+        public string[] Lessions { get; set; }
     }
 }
