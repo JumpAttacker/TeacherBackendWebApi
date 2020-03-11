@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TeacherBackend.Data;
 using TeacherBackend.Model;
@@ -18,33 +17,25 @@ namespace TeacherBackend.Controllers
     [ApiController]
     public class LoginController : Controller
     {
-        private readonly IConfiguration _config;
         private readonly ILogger<LoginController> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
 
-        private readonly List<UserModel> _users = new List<UserModel>
-        {
-            new UserModel {Login = "admin", Password = "admin", Role = "admin"},
-            new UserModel {Login = "test", Password = "test", Role = "user"}
-        };
-
         // GET
-        public LoginController(ILogger<LoginController> logger, IConfiguration config, IUnitOfWork unitOfWork,
+        public LoginController(ILogger<LoginController> logger, IUnitOfWork unitOfWork,
             IUserService userService)
         {
             _logger = logger;
-            _config = config;
             _unitOfWork = unitOfWork;
             _userService = userService;
         }
 
         [HttpGet]
-        public IActionResult Login(string loginOrMail, string password)
+        public async Task<IActionResult> Login(string email, string password)
         {
-            var authenticateModel = new AuthenticateModel {LoginOrMail = loginOrMail, Password = password};
+            var authenticateModel = new AuthenticateModel {Email = email, Password = password};
 
-            var user = AuthenticatedUser(authenticateModel);
+            var user =await AuthenticatedUser(authenticateModel);
 
             if (user == null) return Ok(new {Error = "Incorrect login or password"});
 
@@ -53,7 +44,7 @@ namespace TeacherBackend.Controllers
             return Ok(
                 new
                 {
-                    user.Login,
+                    Login = user.Email,
                     Token = jwtToken
                 }
             );
@@ -62,8 +53,8 @@ namespace TeacherBackend.Controllers
         [HttpGet("fake")]
         public async Task<List<UserModel>> FakeUser()
         {
-            var user1 = new UserModel {Login = "Tom", Age = 33};
-            var user2 = new UserModel {Login = "Jerry", Age = 31};
+            var user1 = new UserModel {Email = "Tom"};
+            var user2 = new UserModel {Email = "Jerry"};
 
             _unitOfWork.UserModelRepository.Create(user1);
             _unitOfWork.UserModelRepository.Create(user2);
@@ -71,7 +62,7 @@ namespace TeacherBackend.Controllers
             _unitOfWork.Save();
 
             var users = await _unitOfWork.UserModelRepository.GetAll().ToListAsync();
-            foreach (var u in users) Console.WriteLine($"{u.Id}.{u.Login} - {u.Age}");
+            foreach (var u in users) Console.WriteLine($"{u.Id}.{u.Email}");
 
             return users;
         }
@@ -100,12 +91,11 @@ namespace TeacherBackend.Controllers
         }
 */
 
-        private UserModel AuthenticatedUser(AuthenticateModel authData)
+        private async Task<UserModel> AuthenticatedUser(AuthenticateModel authData)
         {
-            var user = _users.FirstOrDefault(x =>
-                (x.Login == authData.LoginOrMail || x.Email == authData.LoginOrMail) &&
-                x.Password == authData.Password);
-            //TODO: get user from db
+            var allUsers = await _unitOfWork.UserModelRepository.GetAll().ToListAsync();
+            var user = await _unitOfWork.UserModelRepository.GetAll().FirstOrDefaultAsync(x => x.Email == authData.Email &&
+                                                                                         x.Password == authData.Password);
             return user;
         }
 

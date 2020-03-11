@@ -7,7 +7,7 @@ namespace TeacherBackend.Data
     {
         private bool _disposed;
         private IRepository<Lesson> _lessonRepository;
-        private IRepository<LessonSubject> _lessonSubjectRepository;
+        private IRepository<Subject> _lessonSubjectRepository;
         private IRepository<UserModel> _userModelRepository;
 
         public UnitOfWork()
@@ -22,8 +22,8 @@ namespace TeacherBackend.Data
 
         public IRepository<Lesson> LessonRepository => _lessonRepository ??= new Repository<Lesson>(Context);
 
-        public IRepository<LessonSubject> LessonSubjectRepository =>
-            _lessonSubjectRepository ??= new Repository<LessonSubject>(Context);
+        public IRepository<Subject> LessonSubjectRepository =>
+            _lessonSubjectRepository ??= new Repository<Subject>(Context);
 
         public void Save()
         {

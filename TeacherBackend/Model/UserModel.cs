@@ -1,23 +1,25 @@
-﻿namespace TeacherBackend.Model
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace TeacherBackend.Model
 {
     public class UserModel : Entity
     {
-        public string Login { get; set; }
-        public string Password { get; set; }
+        [Required]  
         public string Email { get; set; }
-        public int Age { get; set; }
-        public UserType UserType { get; set; }
+        [Required]  
+        public string FirstName { get; set; }
+        [Required]  
+        public string SecondName { get; set; }
+        [Required]  
+        public string Password { get; set; }
+        [Required]  
         public string Role { get; set; }
-    }
-
-    public class RegistrationUserModel
-    {
-        public string Login { get; set; }
-        public string Password { get; set; }
-        public string Email { get; set; }
-        public int Age { get; set; }
-        public UserType UserType { get; set; }
+        [Required]  
         public int ClassNumber { get; set; }
-        public string[] Lessions { get; set; }
+        [Required]  
+        public List<UserModelSubject> WantToLearn { get; set; }
+        public DateTime RegistrationTime { get; set; }
     }
 }

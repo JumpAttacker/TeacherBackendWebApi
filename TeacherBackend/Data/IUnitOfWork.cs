@@ -7,7 +7,7 @@ namespace TeacherBackend.Data
     {
         IRepository<UserModel> UserModelRepository { get; }
         IRepository<Lesson> LessonRepository { get; }
-        IRepository<LessonSubject> LessonSubjectRepository { get; }
+        IRepository<Subject> LessonSubjectRepository { get; }
         void Save();
     }
 }

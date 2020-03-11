@@ -8,7 +8,7 @@ namespace TeacherBackend.Model
         public DateTime StartTime { get; set; }
         public int Minutes { get; set; }
         public int Price { get; set; }
-        public LessonSubject LessonSubject { get; set; }
+        public Subject LessonSubject { get; set; }
         public UserModel Teacher { get; set; }
         public UserModel Student { get; set; }
     }

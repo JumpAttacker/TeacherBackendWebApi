@@ -51,7 +51,7 @@ namespace TeacherBackend.Services
             if (person == null) return null;
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, person.Email),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
