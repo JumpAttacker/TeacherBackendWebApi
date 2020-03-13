@@ -25,9 +25,14 @@ namespace TeacherBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             modelBuilder.Entity<UserModel>()
                 .Property(b => b.RegistrationTime)
                 .HasDefaultValueSql("getdate()");
+            
+            modelBuilder.Entity<UserModel>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             modelBuilder.Entity<UserModelSubject>()
                 .HasKey(t => new {t.SubjectId, t.UserModelId});
