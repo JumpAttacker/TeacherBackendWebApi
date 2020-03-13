@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TeacherBackend.Data;
@@ -24,24 +27,42 @@ namespace TeacherBackend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Registration(UserModel registrationData)
+        public async Task<OkObjectResult> Registration([FromBody] RegistrationModel registrationData)
         {
-            var userWithDatEmailInDb = _unitOfWork.UserModelRepository.GetAll()
+            var userWithDatEmailInDb = await _unitOfWork.UserModelRepository.GetAll()
                 .FirstOrDefaultAsync(x => x.Email == registrationData.Email);
             if (userWithDatEmailInDb != null)
             {
                 return Ok(new {Error = "current email is already using"});
             }
 
-            _unitOfWork.UserModelRepository.Create(registrationData);
+            var subjects = await _unitOfWork.SubjectRepository.GetAll()
+                .Where(x => registrationData.WantToLearn.Contains(x.Name)).ToListAsync();
 
-            _unitOfWork.Save();
+            var userModel = new UserModel
+            {
+                Email = registrationData.Email,
+                Password = registrationData.Password,
+                ClassNumber = registrationData.ClassNumber,
+                FirstName = registrationData.FirstName,
+                SecondName = registrationData.SecondName,
+                Role = "user",
+            };
+            List<UserModelSubject> userSubject = subjects.Select(s => new UserModelSubject {Subject = s, UserModel = userModel})
+                .ToList();
 
-            var jwtToken = _userService.GenerateJwtToken(registrationData);
+            userModel.Subjects.AddRange(userSubject);
+
+            await _unitOfWork.UserModelRepository.Create(userModel);
+
+            await _unitOfWork.SaveAsync();
+            var users = await _unitOfWork.UserModelRepository.GetAll().Include(x=>x.Subjects).ToListAsync();
+            var jwtToken = _userService.GenerateJwtToken(userModel);
 
             return Ok(
                 new
                 {
+                    Message = "Успешная регистрация!",
                     Login = registrationData.Email,
                     Token = jwtToken
                 }

@@ -35,7 +35,7 @@ namespace TeacherBackend.Controllers
         {
             var authenticateModel = new AuthenticateModel {Email = email, Password = password};
 
-            var user =await AuthenticatedUser(authenticateModel);
+            var user = await AuthenticatedUser(authenticateModel);
 
             if (user == null) return Ok(new {Error = "Incorrect login or password"});
 
@@ -56,8 +56,8 @@ namespace TeacherBackend.Controllers
             var user1 = new UserModel {Email = "Tom"};
             var user2 = new UserModel {Email = "Jerry"};
 
-            _unitOfWork.UserModelRepository.Create(user1);
-            _unitOfWork.UserModelRepository.Create(user2);
+            await _unitOfWork.UserModelRepository.Create(user1);
+            await _unitOfWork.UserModelRepository.Create(user2);
 
             _unitOfWork.Save();
 
@@ -94,8 +94,9 @@ namespace TeacherBackend.Controllers
         private async Task<UserModel> AuthenticatedUser(AuthenticateModel authData)
         {
             var allUsers = await _unitOfWork.UserModelRepository.GetAll().ToListAsync();
-            var user = await _unitOfWork.UserModelRepository.GetAll().FirstOrDefaultAsync(x => x.Email == authData.Email &&
-                                                                                         x.Password == authData.Password);
+            var user = await _unitOfWork.UserModelRepository.GetAll().FirstOrDefaultAsync(x =>
+                x.Email == authData.Email &&
+                x.Password == authData.Password);
             return user;
         }
 
@@ -110,7 +111,6 @@ namespace TeacherBackend.Controllers
             var user = User;
             var userName = claims[0].Value;
             return "Welcome to: " + userName + " " + User.Identity.Name;
-            ;
         }
 
         [Authorize]

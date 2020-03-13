@@ -1,4 +1,6 @@
-﻿namespace TeacherBackend.Model
+﻿using Newtonsoft.Json;
+
+namespace TeacherBackend.Model
 {
     public class UserModelSubject
     {

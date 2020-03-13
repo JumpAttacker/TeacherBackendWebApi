@@ -4,9 +4,9 @@ using TeacherBackend.Model;
 
 namespace TeacherBackend.Data
 {
-    public interface IRepository<TEntity> where TEntity : class, IEntity
+    public interface IRepository<TEntity> where TEntity : class
     {
-        void Create(TEntity entity);
+        Task Create(TEntity entity);
         void Delete(TEntity entity);
         Task Delete(int id);
         Task Edit(TEntity entity);

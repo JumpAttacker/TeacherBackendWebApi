@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TeacherBackend.Model;
 
 namespace TeacherBackend.Data
@@ -22,12 +23,17 @@ namespace TeacherBackend.Data
 
         public IRepository<Lesson> LessonRepository => _lessonRepository ??= new Repository<Lesson>(Context);
 
-        public IRepository<Subject> LessonSubjectRepository =>
+        public IRepository<Subject> SubjectRepository =>
             _lessonSubjectRepository ??= new Repository<Subject>(Context);
 
         public void Save()
         {
             Context.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await Context.SaveChangesAsync();
         }
 
         public void Dispose()

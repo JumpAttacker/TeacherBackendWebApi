@@ -14,9 +14,9 @@ namespace TeacherBackend.Data
             _context = context;
         }
 
-        public void Create(TEntity entity)
+        public async Task Create(TEntity entity)
         {
-            _context.Set<TEntity>().AddAsync(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
         }
 
         public void Delete(TEntity entity)

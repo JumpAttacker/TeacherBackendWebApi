@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using TeacherBackend.Model;
 
 namespace TeacherBackend.Data
@@ -7,7 +8,8 @@ namespace TeacherBackend.Data
     {
         IRepository<UserModel> UserModelRepository { get; }
         IRepository<Lesson> LessonRepository { get; }
-        IRepository<Subject> LessonSubjectRepository { get; }
+        IRepository<Subject> SubjectRepository { get; }
         void Save();
+        Task SaveAsync();
     }
 }
